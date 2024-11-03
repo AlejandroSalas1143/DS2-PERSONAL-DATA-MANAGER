@@ -36,16 +36,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const botonEditar = `<button data-documento="${usuario.nroDocumento}" class="edit-btn action">Editar</button>`;
                 const botonEliminar = `<button data-documento="${usuario.nroDocumento}" class="delete-btn action">Eliminar</button>`;
                 fila.innerHTML = `
-                <td>${celdaFoto}</td>
                 <td>${usuario.tipoDocumento}</td>
-                <td>${usuario.nroDocumento}</td>
+                <td><a href="perfil.html?nroDocumento=${usuario.nroDocumento}">${usuario.nroDocumento}</a></td>
                 <td>${usuario.primerNombre}</td>
-                <td>${usuario.segundoNombre || ''}</td>
                 <td>${usuario.apellidos}</td>
-                <td>${new Date(usuario.fechaNacimiento).toLocaleDateString()}</td>
-                <td>${usuario.genero}</td>
-                <td>${usuario.correoElectronico}</td>
-                <td>${usuario.celular}</td>
                 <td class="aaaa">${botonEditar}${botonEliminar}</td>
             `;
                 tabla.appendChild(fila);
@@ -149,6 +143,9 @@ function enviarDatosAlBackend() {
             formulario.style.display = 'none';  // Ocultar el formulario después de enviar los datos
             formulario.reset();  // Limpiar el formulario
             agregarUsuarioATabla(data);
+             // Redirigir al perfil del usuario recién creado
+            const nroDocumento = data.nroDocumento; // Supongamos que la respuesta tiene el nroDocumento
+            window.location.href = `perfil.html?nroDocumento=${nroDocumento}`;
         })
         .catch(error => {
             alert('El servicio de crear no está disponible');
@@ -166,58 +163,68 @@ function agregarUsuarioATabla(usuario) {
     const botonEliminar = `<button data-documento="${usuario.nroDocumento}" class="delete-btn action">Eliminar</button>`;
     // Crear cada celda y añadirla a la fila
     fila.innerHTML = `
-        <td>${celdaFoto}</td>
         <td>${usuario.tipoDocumento}</td>
-        <td>${usuario.nroDocumento}</td>
+        <td><a href="perfil.html?nroDocumento=${usuario.nroDocumento}">${usuario.nroDocumento}</a></td>
         <td>${usuario.primerNombre}</td>
-        <td>${usuario.segundoNombre || ''}</td>
         <td>${usuario.apellidos}</td>
-        <td>${new Date(usuario.fechaNacimiento).toLocaleDateString()}</td>
-        <td>${usuario.genero}</td>
-        <td>${usuario.correoElectronico}</td>
-        <td>${usuario.celular}</td>
-        <td>${botonEditar}${botonEliminar}</td>
+        <td class="aaaa">${botonEditar}${botonEliminar}</td>
     `;
 
     // Añadir la fila a la tabla
     tabla.appendChild(fila);
 }
 
+
 function cargarUsuarioEnFormulario(nroDocumento) {
-    fetch(`http://localhost:3005/consultar/users/${nroDocumento}`, {
-        method: 'GET'
-    })
+    // Verificar si el servicio de consulta está disponible
+    fetch('http://localhost:3010/crear/status', { method: 'GET' })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('El servicio de actualizar no está disponible en este momento.');
+            }
+            // Si el servicio de consulta está disponible, proceder a obtener el usuario
+            return fetch(`http://localhost:3005/consultar/users/${nroDocumento}`, {
+                method: 'GET'
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('No se pudo obtener la información del usuario.');
             }
             return response.json();
         })
         .then(usuario => {
+            // Cargar datos en el formulario para editar
             document.getElementById('documento').value = usuario.nroDocumento;
             document.getElementById('1nombre').value = usuario.primerNombre;
             document.getElementById('2nombre').value = usuario.segundoNombre || '';
             document.getElementById('apellido').value = usuario.apellidos;
-            document.getElementById('nacimiento').value = usuario.fechaNacimiento.slice(0, 10); // Ajusta formato de fecha
+            document.getElementById('nacimiento').value = usuario.fechaNacimiento.slice(0, 10);
             document.getElementById('genero').value = usuario.genero;
             document.getElementById('email').value = usuario.correoElectronico;
             document.getElementById('tel').value = usuario.celular;
             document.getElementById('tipodoc').value = usuario.tipoDocumento;
+
+            // Cambiar el botón de envío a modo "Editar"
             const formButton = document.getElementById('formButton');
             formButton.textContent = 'Editar';
-            formButton.classList.remove('formulario__submit'); // Remover clase anterior si es necesaria
-            formButton.classList.add('formulario__edit'); // Añadir nueva clase para el modo de edición
+            formButton.classList.remove('formulario__submit');
+            formButton.classList.add('formulario__edit');
             formButton.onclick = function (event) {
                 event.preventDefault();
-                actualizarDatosUsuario(usuario.nroDocumento); // Llamar a la función de actualización
+                actualizarDatosUsuario(usuario.nroDocumento);
             };
 
             // Mostrar el formulario
             formulario.style.display = 'block';
             setTimeout(() => formulario.classList.add('show'), 50);
         })
-        .catch(error => console.error('Error al cargar el usuario:', error));
+        .catch(error => {
+            console.error('Error al cargar el usuario:', error);
+            alert('El servicio de actualizar no está disponible en este momento.');
+        });
 }
+
 
 function eliminarUsuario(nroDocumento) {
     if (confirm("¿Estás seguro de que quieres eliminar este usuario?")) {
@@ -284,16 +291,11 @@ function actualizarVistaUsuario(usuario) {
     const fila = document.querySelector(`tr[data-documento="${usuario.nroDocumento}"]`);
     if (fila) {
         fila.innerHTML = `
-            <td>${usuario.foto ? `<img src="${usuario.foto}" alt="Foto de Perfil" style="width: 50px; height: auto;">` : ''}</td>
             <td>${usuario.tipoDocumento}</td>
-            <td>${usuario.nroDocumento}</td>
+            <td><a href="perfil.html?nroDocumento=${usuario.nroDocumento}">${usuario.nroDocumento}</a></td>
             <td>${usuario.primerNombre}</td>
-            <td>${usuario.segundoNombre || ''}</td>
             <td>${usuario.apellidos}</td>
-            <td>${new Date(usuario.fechaNacimiento).toLocaleDateString()}</td>
-            <td>${usuario.genero}</td>
-            <td>${usuario.correoElectronico}</td>
-            <td>${usuario.celular}</td>
+            <td class="aaaa">${botonEditar}${botonEliminar}</td>
         `;
     }
 }
@@ -303,6 +305,8 @@ function validarFormulario() {
     let valido = true;
     var numeroRegex = /^[0-9]+$/;
     var letrasRegex = /^[A-Za-z]+$/;
+    var apellidoRegex = /^[A-Za-z]+(?:\s[A-Za-z]+)?$/;
+
     var nombre2Regex = /^[A-Za-z]*$/;
 
     const input = document.getElementById('foto');
@@ -367,7 +371,7 @@ function validarFormulario() {
     if (apellido === '') {
         errorApellido.textContent = 'Ingresa tu apellido';
         valido = false;
-    } else if (!apellido.match(letrasRegex)) {
+    } else if (!apellido.match(apellidoRegex)) {
         errorApellido.textContent = 'El apellido debe contener solo letras';
         valido = false;
     } else {
@@ -421,10 +425,25 @@ function validarFormulario() {
 }
 
 botonMostrarFormulario.addEventListener('click', function () {
-    formulario.style.display = 'block'; // Mostrar el formulario
-    setTimeout(function () {
-        formulario.classList.add('show'); // Hacer fade in
-    }, 50); // Esperar un poco antes de aplicar la clase para que se muestre la animación
+    // Verificar disponibilidad del servicio
+    fetch('http://localhost:3010/crear/status')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Servicio no disponible');
+            }
+            return response.json();
+        })
+        .then(() => {
+            // Si el servicio está disponible, mostrar el formulario
+            formulario.style.display = 'block'; // Mostrar el formulario
+            setTimeout(function () {
+                formulario.classList.add('show'); // Hacer fade in
+            }, 50);
+        })
+        .catch(error => {
+            console.error('Error de servicio:', error);
+            alert('El servicio no está disponible en este momento. Por favor, inténtalo más tarde.');
+        });
 });
 
 cerrarFormulario.addEventListener('click', function () {
@@ -464,14 +483,14 @@ limitarLongitud(campo3, campo3.getAttribute.maxLength);
 limitarLongitud(campo4, campo4.getAttribute.maxLength);
 limitarLongitud(campo5, campo5.getAttribute.maxLength);
 
-function toggleFilters() {
-    var filterContainer = document.getElementById('filterContainer');
-    if (filterContainer.style.display === "none") {
-        filterContainer.style.display = "block";
-    } else {
-        filterContainer.style.display = "none";
-    }
-}
+// function toggleFilters() {
+//     var filterContainer = document.getElementById('filterContainer');
+//     if (filterContainer.style.display === "none") {
+//         filterContainer.style.display = "block";
+//     } else {
+//         filterContainer.style.display = "none";
+//     }
+// }
 
 function searchDocument() {
     var documentType = document.getElementById('documentType').value;
@@ -519,17 +538,11 @@ function applyFilter() {
                 const botonEditar = `<button data-documento="${usuario.nroDocumento}" class="edit-btn action">Editar</button>`;
                 const botonEliminar = `<button data-documento="${usuario.nroDocumento}" class="delete-btn action">Eliminar</button>`;
                 fila.innerHTML = `
-                    <td>${celdaFoto}</td>
                     <td>${usuario.tipoDocumento}</td>
-                    <td>${usuario.nroDocumento}</td>
+                    <td><a href="perfil.html?nroDocumento=${usuario.nroDocumento}">${usuario.nroDocumento}</a></td>
                     <td>${usuario.primerNombre}</td>
-                    <td>${usuario.segundoNombre || ''}</td>
                     <td>${usuario.apellidos}</td>
-                    <td>${new Date(usuario.fechaNacimiento).toLocaleDateString()}</td>
-                    <td>${usuario.genero}</td>
-                    <td>${usuario.correoElectronico}</td>
-                    <td>${usuario.celular}</td>
-                    <td>${botonEditar}${botonEliminar}</td>
+                    <td class="aaaa">${botonEditar}${botonEliminar}</td>
                 `;
                 tabla.appendChild(fila);
             });
@@ -540,7 +553,7 @@ function applyFilter() {
             console.error('Error al cargar los usuarios:', error);
         });
 
-    toggleFilters(); // Opcional: cerrar el filtro después de aplicar
+    // toggleFilters(); // Opcional: cerrar el filtro después de aplicar
 }
 
 

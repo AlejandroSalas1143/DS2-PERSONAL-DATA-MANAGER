@@ -20,7 +20,7 @@
                     <a href="index.html">Users</a>
                 </li>
                 <li id="log">
-                    <a href="log.html">Log</a>
+                    <a href="log.html">Logs</a>
                 </li>
             </ul>
         </nav>
@@ -28,100 +28,72 @@
 
     <main>
         <section class="section-1">
-            <article class="section-1__search-and-create">
-                <div class="search-and-create__search">
-                    <input type="text" id="searchInput" placeholder="Consultar...">
-                    <button id="loadAllBtn" style="display: none;"><span class="icon-clear"></span></button>
-                    <!-- Botón para cargar todos los usuarios -->
-                    <button id="searchBtn"><span class="icon-search"></span></button>
-                </div>
-                <div>
-                    <button class="search-and-create__create" id="create_btn">Crear Usuario</button>
-                    <button class="toggle-button" onclick="toggleFilters()">Filtros</button>
-                    <div class="filter-container" id="filterContainer" style="display: none;">
-                        <form id="filterForm">
-                            <div class="form-group">
-                                <label><strong>Genero:</strong></label><br>
-                                <input type="checkbox" id="Masculino" name="masculino" value="Masculino">
+            <section class="noc">
+                <div class="filter-container" id="filterContainer">
+                    <h2>Filtros</h2>
+                    <br>
+                    <form id="filterForm">
+                        <div class="form-group">
+                            <label><strong>Genero:</strong></label><br>
+                            <div class="gen">
                                 <label for="Masculino">Masculino</label>
-                                <input type="checkbox" id="Femenino" name="femenino" value="Femenino">
+                                <input type="checkbox" id="Masculino" name="masculino" value="Masculino">
+                            </div>
+                            <div class="gen">
                                 <label for="Femenino">Femenino</label>
-                                <input type="checkbox" id="No binario" name="No binario" value="No binario">
+                                <input type="checkbox" id="Femenino" name="femenino" value="Femenino">
+                            </div>
+                            <div class="gen">
                                 <label for="No binario">No binario</label>
-                                <input type="checkbox" id="NA" name="NA" value="NA">
+                                <input type="checkbox" id="No binario" name="No binario" value="No binario">
+                            </div>
+                            <div class="gen">
                                 <label for="NA">NA</label>
+                                <input type="checkbox" id="NA" name="NA" value="NA">
                             </div>
-                            <div class="form-group">
-                                <label><strong>Tipo de Documento:</strong></label>
-                                <select id="documentType" name="documentType">
-                                    <option value="">Seleccione un tipo</option>
-                                    <option value="Cedula">Cédula</option>
-                                    <option value="Tarjeta de identidad">Tarjeta de Identidad</option>
-                                </select>
-                            </div>
-                            <button type="button" onclick="applyFilter()">Aplicar</button>
-                            <button type="button" onclick="clearFilters()">Limpiar todos los filtros</button>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="form-group">
+                            <label><strong>Tipo de Documento:</strong></label>
+                            <select id="documentType" name="documentType">
+                                <option value="">Seleccione un tipo</option>
+                                <option value="Cedula">Cédula</option>
+                                <option value="Tarjeta de identidad">Tarjeta de Identidad</option>
+                            </select>
+                        </div>
+                        <button type="button" onclick="applyFilter()" id="apply">Aplicar</button>
+                        <button type="button" onclick="clearFilters()">Limpiar todos los filtros</button>
+                    </form>
                 </div>
-            </article>
-            <article class="section-1__viewusers">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Foto de Perfil</th>
-                            <th>Tipo de Documento</th>
-                            <th>Nro. de Documento</th>
-                            <th>Primer Nombre</th>
-                            <th>Segundo Nombre</th>
-                            <th>Apellido</th>
-                            <th>Fecha de Nacimiento</th>
-                            <th>Género</th>
-                            <th>Correo Electrónico</th>
-                            <th>Celular</th>
-                            <th>Accion</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>John</td>
-                            <td></td>
-                            <td>Doe</td>
-                            <td>30</td>
-                            <td></td>
-                            <td>john.doe@example.com</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>Jane</td>
-                            <td></td>
-                            <td>Smith</td>
-                            <td>25</td>
-                            <td></td>
-                            <td>jane.smith@example.com</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>Michael</td>
-                            <td></td>
-                            <td>Johnson</td>
-                            <td>35</td>
-                            <td></td>
-                            <td>michael.johnson@example.com</td>
-                            <td></td>
-                        </tr> -->
-                    </tbody>
-                </table>
-            </article>
+                <div class="menosc">
+                    <div class="section-1__search-and-create">
+                        <div class="search-and-create__search">
+                            <input type="text" id="searchInput" placeholder="Consultar nro documento...">
+                            <button id="loadAllBtn" style="display: none;"><span class="icon-clear"></span></button>
+                            <!-- Botón para cargar todos los usuarios -->
+                            <button id="searchBtn"><span class="icon-search"></span></button>
+                        </div>
+                        <div>
+                            <button class="search-and-create__create" id="create_btn">Crear Usuario</button>
+                            <!-- <button class="toggle-button" onclick="toggleFilters()">Filtros</button> -->
+                        </div>
+                    </div>
+                    <article class="section-1__viewusers">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo de Documento</th>
+                                    <th>Nro. de Documento</th>
+                                    <th>Primer Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Accion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </article>
+                </div>
+            </section>
             <article>
                 <form id="formulario" class="form">
                     <div class="form__formulario">
@@ -133,7 +105,8 @@
                         </div>
                         <div class="formulario__documento">
                             <div>
-                                <label class="label" for="tipodoc">Tipo de Documento: <span class="required">*</span></label>
+                                <label class="label" for="tipodoc">Tipo de Documento: <span
+                                        class="required">*</span></label>
                                 <select name="tipodoc" id="tipodoc">
                                     <option value=""></option>
                                     <option value="Cedula">Cedula</option>
@@ -142,7 +115,8 @@
                                 <span id="errortDoc"></span>
                             </div>
                             <div>
-                                <label class="label" for="documento"> Nro. de Documento: <span class="required">*</span></label>
+                                <label class="label" for="documento"> Nro. de Documento: <span
+                                        class="required">*</span></label>
                                 <input type="text" id="documento" name="documento" maxlength="10">
                                 <span id="errorDoc"></span>
                             </div>
@@ -150,7 +124,8 @@
 
                         <div class="formulario__nombre">
                             <div class="formulario__nombre__1nombre">
-                                <label class="label" for="1nombre"> Primer Nombre: <span class="required">*</span></label>
+                                <label class="label" for="1nombre"> Primer Nombre: <span
+                                        class="required">*</span></label>
                                 <input type="text" id="1nombre" name="1nombre" maxlength="30">
                                 <span id="error1Nombre"></span>
                             </div>
@@ -170,7 +145,8 @@
 
                         <div class="formulario__nacimiento-genero">
                             <div>
-                                <label class="label" for="nacimiento">Fecha de Nacimiento: <span class="required">*</span></label>
+                                <label class="label" for="nacimiento">Fecha de Nacimiento: <span
+                                        class="required">*</span></label>
                                 <input type="date" id="nacimiento" name="nacimiento">
                                 <span id="errorFecha"></span>
                             </div>
@@ -189,7 +165,8 @@
                         </div>
 
                         <div class="formulario__correo">
-                            <label class="label" for="email">Correo Electrónico: <span class="required">*</span></label></label>
+                            <label class="label" for="email">Correo Electrónico: <span
+                                    class="required">*</span></label></label>
                             <input type="text" id="email" name="email">
                             <span id="errorEmail"></span>
                         </div>
@@ -214,7 +191,7 @@
             Proyecto realizado para <strong>Diseño de Software II</strong>
         </p>
         <p class="integrantes">
-            <b>Realizado por:</b> Daniel Olivares, Alejandro Salas, Cristian Chavez y Valeria Jimenez.
+            <b>Realizado por:</b> Juan Pablo.
         </p>
     </footer>
 
