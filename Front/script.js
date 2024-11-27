@@ -78,9 +78,6 @@ function searchDocument() {
 function applyFilter() {
     // Obteniendo valores del formulario
     var action = [];
-    if (document.getElementById('Create').checked) action.push('create');
-    if (document.getElementById('Update').checked) action.push('update');
-    if (document.getElementById('Delete').checked) action.push('delete');
 
     var startDate = document.getElementById('startDate').value;
     var endDate = document.getElementById('endDate').value;
