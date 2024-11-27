@@ -1,7 +1,43 @@
-const botonMostrarFormulario = document.getElementById('create_btn');
 const formulario = document.getElementById('formulario');
-const cerrarFormulario = document.getElementById('formulario__cerrar');
+const formModal = document.getElementById("formModal");
+const addNewBtn = document.getElementById("addNewBtn");
+const closeModal = document.getElementById('formulario__cerrar');
 
+let isEditing = false;
+
+// Show modal when Add New is clicked
+addNewBtn.addEventListener("click", () => {
+    fetch('http://localhost:3010/crear/status')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Servicio no disponible');
+            }
+            return response.json();
+        })
+        .then(() => {
+            isEditing = false;
+            document.getElementById('formTitle').textContent = "New User";
+            formButton.textContent = "Enviar";
+            formulario.reset();
+            formModal.classList.remove("hidden");
+        })
+        .catch(error => {
+            console.error('Error de servicio:', error);
+            alert('El servicio no está disponible en este momento. Por favor, inténtalo más tarde.');
+        });
+});
+
+// Hide modal when close icon is clicked
+closeModal.addEventListener("click", () => {
+    formModal.classList.add("hidden");
+});
+
+// Hide modal when clicking outside the form
+formModal.addEventListener("click", (event) => {
+    if (event.target === formModal) {
+        formModal.classList.add("hidden");
+    }
+});
 
 
 formulario.addEventListener('submit', function (event) {
@@ -33,18 +69,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 const fila = document.createElement('tr');
                 console.log("Hola", usuario);
                 const celdaFoto = usuario.foto ? `<img src="${usuario.foto}" alt="Foto de Perfil" style="width: 50px; height: auto;">` : '';
-                const botonEditar = `<button data-documento="${usuario.nroDocumento}" class="edit-btn action">Editar</button>`;
-                const botonEliminar = `<button data-documento="${usuario.nroDocumento}" class="delete-btn action">Eliminar</button>`;
+                const botonVer = `
+                <button data-documento="${usuario.nroDocumento}" class="view-btn action" id="a-btn">
+                    <a href="perfil.html?nroDocumento=${usuario.nroDocumento}"><i class="fas fa-eye"></i> View</a>
+                </button>`;
+                const botonEditar = `
+                    <button data-documento="${usuario.nroDocumento}" class="edit-btn action">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>`;
+                const botonEliminar = `
+                    <button data-documento="${usuario.nroDocumento}" class="delete-btn action">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>`;
                 fila.innerHTML = `
-                <td>${usuario.tipoDocumento}</td>
-                <td><a href="perfil.html?nroDocumento=${usuario.nroDocumento}">${usuario.nroDocumento}</a></td>
-                <td>${usuario.primerNombre}</td>
-                <td>${usuario.apellidos}</td>
-                <td class="aaaa">${botonEditar}${botonEliminar}</td>
-            `;
+                    <td>${usuario.tipoDocumento}</td>
+                    <td><a href="perfil.html?nroDocumento=${usuario.nroDocumento}">${usuario.nroDocumento}</a></td>
+                    <td>${usuario.primerNombre}</td>
+                    <td>${usuario.apellidos}</td>
+                    <td class="aaaa">${botonVer}${botonEditar}${botonEliminar}</td>
+                `;
                 tabla.appendChild(fila);
             });
         })
+
         .catch(error => {
             alert('El servicio de consultar no está disponible');
             console.error('Error al cargar los usuarios:', error)
@@ -120,7 +167,6 @@ function enviarDatosAlBackend() {
     Object.keys(datosUsuario).forEach((key) => {
         formData.append(key, datosUsuario[key]);
     });
-
     fetch('http://localhost:3010/crear/', {
         method: 'POST',
         body: formData // Nota: no se establece el 'Content-Type' cuando se usa FormData
@@ -138,12 +184,11 @@ function enviarDatosAlBackend() {
             return response.json()
         })
         .then(data => {
-            console.log('Usuario creado:', data);
             alert('Usuario creado con éxito');
-            formulario.style.display = 'none';  // Ocultar el formulario después de enviar los datos
-            formulario.reset();  // Limpiar el formulario
+            formulario.style.display = 'none';
+            formulario.reset();
             agregarUsuarioATabla(data);
-             // Redirigir al perfil del usuario recién creado
+            // Redirigir al perfil del usuario recién creado
             const nroDocumento = data.nroDocumento; // Supongamos que la respuesta tiene el nroDocumento
             window.location.href = `perfil.html?nroDocumento=${nroDocumento}`;
         })
@@ -159,16 +204,21 @@ function agregarUsuarioATabla(usuario) {
 
     // Generar contenido de la celda de la foto, sólo si hay una foto disponible
     const celdaFoto = usuario.foto ? `<img src="${usuario.foto}" alt="Foto de Perfil" style="width: 50px; height: auto;">` : '';
-    const botonEditar = `<button data-documento="${usuario.nroDocumento}" class="edit-btn action">Editar</button>`;
-    const botonEliminar = `<button data-documento="${usuario.nroDocumento}" class="delete-btn action">Eliminar</button>`;
-    // Crear cada celda y añadirla a la fila
+    const botonEditar = `
+                    <button data-documento="${usuario.nroDocumento}" class="edit-btn action">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>`;
+    const botonEliminar = `
+                    <button data-documento="${usuario.nroDocumento}" class="delete-btn action">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>`;
     fila.innerHTML = `
-        <td>${usuario.tipoDocumento}</td>
-        <td><a href="perfil.html?nroDocumento=${usuario.nroDocumento}">${usuario.nroDocumento}</a></td>
-        <td>${usuario.primerNombre}</td>
-        <td>${usuario.apellidos}</td>
-        <td class="aaaa">${botonEditar}${botonEliminar}</td>
-    `;
+                    <td>${usuario.tipoDocumento}</td>
+                    <td><a href="perfil.html?nroDocumento=${usuario.nroDocumento}">${usuario.nroDocumento}</a></td>
+                    <td>${usuario.primerNombre}</td>
+                    <td>${usuario.apellidos}</td>
+                    <td class="aaaa">${botonEditar}${botonEliminar}</td>
+                `;
 
     // Añadir la fila a la tabla
     tabla.appendChild(fila);
@@ -194,7 +244,11 @@ function cargarUsuarioEnFormulario(nroDocumento) {
             return response.json();
         })
         .then(usuario => {
-            // Cargar datos en el formulario para editar
+            isEditing = true; // Cambiar a modo "Editar"
+            document.getElementById('formTitle').textContent = "Edit User";
+            formButton.textContent = "Editar"; // Cambiar texto del botón
+             // Cargar datos en el formulario para editar
+            // document.getElementById('foto').value = usuario.foto.JSON;
             document.getElementById('documento').value = usuario.nroDocumento;
             document.getElementById('1nombre').value = usuario.primerNombre;
             document.getElementById('2nombre').value = usuario.segundoNombre || '';
@@ -205,19 +259,13 @@ function cargarUsuarioEnFormulario(nroDocumento) {
             document.getElementById('tel').value = usuario.celular;
             document.getElementById('tipodoc').value = usuario.tipoDocumento;
 
-            // Cambiar el botón de envío a modo "Editar"
-            const formButton = document.getElementById('formButton');
-            formButton.textContent = 'Editar';
-            formButton.classList.remove('formulario__submit');
-            formButton.classList.add('formulario__edit');
             formButton.onclick = function (event) {
                 event.preventDefault();
                 actualizarDatosUsuario(usuario.nroDocumento);
             };
+            
+            formModal.classList.remove("hidden");
 
-            // Mostrar el formulario
-            formulario.style.display = 'block';
-            setTimeout(() => formulario.classList.add('show'), 50);
         })
         .catch(error => {
             console.error('Error al cargar el usuario:', error);
@@ -264,7 +312,6 @@ function actualizarDatosUsuario(nroDocumento) {
         tipoDocumento: document.getElementById('tipodoc').value.trim(),
         foto: document.getElementById('foto').files[0] //? document.getElementById('foto').files: "" // Asegúrate de manejar la carga de archivos adecuadamente si es necesario
     };
-
     fetch(`http://localhost:3010/crear/${nroDocumento}`, {
         method: 'PUT',
         headers: {
@@ -424,27 +471,6 @@ function validarFormulario() {
     return valido;
 }
 
-botonMostrarFormulario.addEventListener('click', function () {
-    // Verificar disponibilidad del servicio
-    fetch('http://localhost:3010/crear/status')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Servicio no disponible');
-            }
-            return response.json();
-        })
-        .then(() => {
-            // Si el servicio está disponible, mostrar el formulario
-            formulario.style.display = 'block'; // Mostrar el formulario
-            setTimeout(function () {
-                formulario.classList.add('show'); // Hacer fade in
-            }, 50);
-        })
-        .catch(error => {
-            console.error('Error de servicio:', error);
-            alert('El servicio no está disponible en este momento. Por favor, inténtalo más tarde.');
-        });
-});
 
 cerrarFormulario.addEventListener('click', function () {
     formulario.classList.remove('show'); // Hacer fade out
@@ -535,8 +561,14 @@ function applyFilter() {
             data.forEach(usuario => {
                 const fila = document.createElement('tr');
                 const celdaFoto = usuario.foto ? `<img src="${usuario.foto}" alt="Foto de Perfil" style="width: 50px; height: auto;">` : '';
-                const botonEditar = `<button data-documento="${usuario.nroDocumento}" class="edit-btn action">Editar</button>`;
-                const botonEliminar = `<button data-documento="${usuario.nroDocumento}" class="delete-btn action">Eliminar</button>`;
+                const botonEditar = `
+                <button data-documento="${usuario.nroDocumento}" class="edit-btn action">
+                    <i class="fas fa-edit"></i> Edit
+                </button>`;
+                const botonEliminar = `
+                <button data-documento="${usuario.nroDocumento}" class="delete-btn action">
+                    <i class="fas fa-trash"></i> Delete
+                </button>`;
                 fila.innerHTML = `
                     <td>${usuario.tipoDocumento}</td>
                     <td><a href="perfil.html?nroDocumento=${usuario.nroDocumento}">${usuario.nroDocumento}</a></td>
@@ -563,3 +595,5 @@ function clearFilters() {
     alert('Filtros limpiados');
     window.location.reload();
 }
+
+

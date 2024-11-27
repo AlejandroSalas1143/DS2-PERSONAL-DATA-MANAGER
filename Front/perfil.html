@@ -5,53 +5,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil de Usuario</title>
-    <link rel="stylesheet" href="perfil.css"> <!-- Asegúrate de enlazar tus estilos -->
+    <link rel="stylesheet" href="perfil.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
-    <div class="container">
-        <h1>Perfil del Usuario</h1>
-        <div class="perfil-info">
-            <div class="perfil-info__details">
-                <div class="perfil-info-item">
-                    <strong>Tipo de Documento:</strong> <span id="tipoDocumento">Cargando...</span>
-                </div>
-                <div class="perfil-info-item">
-                    <strong>Número de Documento:</strong> <span id="nroDocumento">Cargando...</span>
-                </div>
-                <div class="perfil-info-item">
-                    <strong>Primer Nombre:</strong> <span id="nombre1">Cargando...</span>
-                </div>
-                <div class="perfil-info-item">
-                    <strong>Segundo Nombre:</strong> <span id="nombre2">Cargando...</span>
-                </div>
-                <div class="perfil-info-item">
-                    <strong>Apellidos:</strong> <span id="apellidos">Cargando...</span>
-                </div>
-                <div class="perfil-info-item">
-                    <strong>Fecha de Nacimiento:</strong> <span id="fechaNacimiento">Cargando...</span>
-                </div>
-                <div class="perfil-info-item">
-                    <strong>Género:</strong> <span id="genero">Cargando...</span>
-                </div>
-                <div class="perfil-info-item">
-                    <strong>Correo Electrónico:</strong> <span id="email">Cargando...</span>
-                </div>
-                <div class="perfil-info-item">
-                    <strong>Celular:</strong> <span id="celular">Cargando...</span>
-                </div>
-            </div>
-            <div class="perfil-info-img-top">
-                <div class="perfil-info__image">
-                    <img id="fotoPerfil" src="#" alt="Foto de Perfil" style="display: none;">
-                </div>
-                <div>
-                    <p id="toponomia">Cargando toponimia...</p>
-                </div>
-            </div>
+    <header class="header">
+        <div class="logo">
+            <h1>PERSONAL DATA MANAGER</h1>
         </div>
-        <button onclick="window.location.href = './index.html'">Volver</button>
-    </div>
+        <nav class="nav">
+            <ul class="nav__items">
+                <li class="nav__item active">
+                    <a href="index.html"><i class="fas fa-users"></i> Users</a>
+                </li>
+                <li class="nav__item">
+                    <a href="log.html"><i class="fas fa-chart-bar"></i> Search Logger</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        <aside class="sidebar">
+            <ul>
+                <li>
+                    <a href="home.html">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html" class="sidebar__item">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                </li>
+                <li>
+                    <a href="log.html" class="sidebar__item">
+                        <i class="fas fa-chart-bar"></i> Search Logger
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar__item active">
+                        <i class="fas fa-user-circle"></i> User Profile
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <section class="content">
+            <header class="content__header">
+                <h1><i class="fas fa-user-circle"></i>User Profile</h1>
+                <button class="btn btn-primary" onclick="window.location.href = './index.html'">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </header>
+
+            <section class="profile-info">
+                <div class="profile-card">
+                    <div class="profile-card__image">
+                        <img id="fotoPerfil" src="#" alt="Foto de Perfil" style="display: none;">
+                    </div>
+                    <div class="profile-card__toponimia">
+                        <p id="toponomia" class="toponomia">Loading toponymy...</p>
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <div class="profile-details__group">
+                        <p><strong>Document Type:</strong> <span id="tipoDocumento">Loading...</span></p>
+                        <p><strong>Document Number:</strong> <span id="nroDocumento">Loading...</span></p>
+                    </div>
+                    <div class="profile-details__group">
+                        <p><strong>First Name:</strong> <span id="nombre1">Loading...</span></p>
+                        <p><strong>Second Name:</strong> <span id="nombre2">Loading...</span></p>
+                        <p><strong>Last Name:</strong> <span id="apellidos">Loading...</span></p>
+                    </div>
+                    <div class="profile-details__group">
+                        <p><strong>Date of Birth:</strong> <span id="fechaNacimiento">Loading...</span></p>
+                        <p><strong>Gender:</strong> <span id="genero">Loading...</span></p>
+                    </div>
+                    <div class="profile-details__group">
+                        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+                        <p><strong>Phone:</strong> <span id="celular">Loading...</span></p>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+
+    <footer class="footer">
+        <p>Designed for Diseño de Software II</p>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -67,7 +111,10 @@
                             fotoPerfil.src = usuario.foto;
                             fotoPerfil.style.display = 'block';
                         }
-
+                        const fechaUTC = new Date(usuario.fechaNacimiento);
+                        const fechaSinAjuste = fechaUTC.toISOString().split('T')[0];
+                        const partes = fechaSinAjuste.split('-');
+                        const fechaFormateada = `${partes[2]}/${partes[1]}/${partes[0]}`;
                         document.getElementById('nombre1').textContent = usuario.primerNombre;
                         document.getElementById('nombre2').textContent = usuario.segundoNombre;
                         document.getElementById('apellidos').textContent = usuario.apellidos;
@@ -75,10 +122,9 @@
                         document.getElementById('celular').textContent = usuario.celular;
                         document.getElementById('tipoDocumento').textContent = usuario.tipoDocumento;
                         document.getElementById('nroDocumento').textContent = usuario.nroDocumento;
-                        document.getElementById('fechaNacimiento').textContent = new Date(usuario.fechaNacimiento).toLocaleDateString();
+                        document.getElementById('fechaNacimiento').textContent = fechaFormateada;
                         document.getElementById('genero').textContent = usuario.genero;
 
-                        // Hacer fetch a la API de toponimia usando el primer nombre
                         return fetch(`http://localhost:3020/toponimia?nombre=${usuario.primerNombre}`, { method: 'GET' });
                     })
                     .then(response => response.json())
@@ -86,9 +132,7 @@
                         document.getElementById('toponomia').textContent = toponimiaData;
                     })
                     .catch(error => {
-                        document.getElementById('toponomia').textContent = 'Servicio de toponomía no disponible.';
-                        // console.error('Error al cargar la información:', error);
-                        // alert('No se pudo cargar la información completa.');
+                        document.getElementById('toponomia').textContent = 'Servicio de toponimia no disponible.';
                     });
             } else {
                 alert('No se encontró el número de documento.');

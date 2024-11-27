@@ -15,23 +15,28 @@ document.addEventListener('DOMContentLoaded', function () {
             return response.json();
         })
         .then(data => {
-            const tabla = document.querySelector('.section-1__viewlog tbody');  // Asume que tienes una tabla para logs
+            // Ordenar los datos por fecha de la más reciente a la más antigua
+            data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            const tabla = document.querySelector('.section-1__viewlog tbody');
             data.forEach(log => {
                 const fila = document.createElement('tr');
                 fila.innerHTML = `
-                <td>${log.action}</td>
-                <td>${new Date(log.timestamp).toLocaleDateString()}</td>
-                <td>${log.nroDocumento}</td>
-                <td>${log.tipoDocumento}</td>
-            `;
+                    <td>${log.action}</td>
+                    <td>${new Date(log.timestamp).toLocaleDateString()}</td>
+                    <td>${log.nroDocumento}</td>
+                    <td>${log.tipoDocumento}</td>
+                    <td>Admin</td>
+                `;
                 tabla.appendChild(fila);
             });
         })
         .catch(error => {
-            alert('El servicio de logs no está disponible')
-            console.error('Error al cargar los logs:', error)
+            alert('El servicio de logs no está disponible');
+            console.error('Error al cargar los logs:', error);
         });
 });
+
 
 
 
@@ -104,6 +109,7 @@ function applyFilter() {
             return response.json();
         })
         .then(data => {
+            data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             const tabla = document.querySelector('.section-1__viewlog tbody');
             tabla.innerHTML = ''; // Limpiar la tabla antes de añadir los nuevos resultados
             data.forEach(log => {
@@ -114,6 +120,7 @@ function applyFilter() {
                 <td>${new Date(log.timestamp).toLocaleDateString()}</td>
                 <td>${log.nroDocumento}</td>
                 <td>${log.tipoDocumento}</td>
+                <td>Admin</td>
             `;
                 tabla.appendChild(fila);
             });
@@ -123,8 +130,6 @@ function applyFilter() {
             alert('El servicio de logs no está disponible')
             console.error('Error al cargar los logs con filtros:', error)
         });
-
-    toggleFilters(); // Opcional: cerrar el filtro después de aplicar
 }
 
 function clearFilters() {
